@@ -1,0 +1,38 @@
+{
+  "name": "eternal-product-meta",
+  "version": "1.0.0",
+  "description": "Eternal Labs product meta Gutenberg sidebar plugin",
+  "private": true,
+  "scripts": {
+    "build": "wp-scripts build src/index.js --output-path=src/build",
+    "start": "wp-scripts start src/index.js --output-path=src/build",
+    "lint:js": "wp-scripts lint-js src/",
+    "lint:style": "stylelint \"src/**/*.{css,scss}\"",
+    "lint:php": "vendor/bin/phpcs --standard=phpcs.xml inc/ eternal-product-meta.php",
+    "lint:phpstan": "vendor/bin/phpstan analyse --configuration=phpstan.neon --no-progress",
+    "format": "prettier --write \"src/**/*.{js,jsx,json,css}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,json,css}\"",
+    "ai:check": "npm run lint:php && npm run lint:phpstan && npm run format:check && npm run lint:js",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx}": [
+      "prettier --write",
+      "wp-scripts lint-js"
+    ],
+    "src/**/*.{css,scss}": [
+      "stylelint --fix"
+    ],
+    "**/*.php": [
+      "vendor/bin/phpcs --standard=phpcs.xml"
+    ]
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0",
+    "stylelint": "^16.0.0",
+    "stylelint-config-standard": "^36.0.0"
+  }
+}
