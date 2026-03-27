@@ -18,6 +18,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Declare compatibility with WooCommerce High-Performance Order Storage (HPOS).
+ */
+add_action(
+	'before_woocommerce_init',
+	function () {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
+	}
+);
+
 define( 'ETERNAL_META_VERSION', '1.0.0' );
 define( 'ETERNAL_META_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ETERNAL_META_URL', plugin_dir_url( __FILE__ ) );
