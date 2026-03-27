@@ -99,7 +99,46 @@ class Eternal_Meta_Registration {
 			)
 		);
 
-		// 6. Top fragrance notes.
+		// 6. Product type label (replaces product-type taxonomy).
+		register_post_meta(
+			'product',
+			'product_type_label',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_text_field',
+				'description'       => __( 'Product type, e.g. Serum, Moisturiser', 'eternal-product-meta' ),
+			)
+		);
+
+		// 7. Skin type label (replaces skin-type taxonomy).
+		register_post_meta(
+			'product',
+			'product_skin_type',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_text_field',
+				'description'       => __( 'Skin type, e.g. Oily, Dry, All', 'eternal-product-meta' ),
+			)
+		);
+
+		// 8. Benefits (replaces product-benefit taxonomy).
+		register_post_meta(
+			'product',
+			'product_benefits',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_textarea_field',
+				'description'       => __( 'Key benefits, comma-separated', 'eternal-product-meta' ),
+			)
+		);
+
+		// 9. Top fragrance notes.
 		register_post_meta(
 			'product',
 			'product_notes_top',

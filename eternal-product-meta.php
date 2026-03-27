@@ -40,10 +40,10 @@ define( 'ETERNAL_META_URL', plugin_dir_url( __FILE__ ) );
  * @return void
  */
 function eternal_meta_init(): void {
-	require_once ETERNAL_META_PATH . 'inc/class-taxonomies.php';
+	require_once ETERNAL_META_PATH . 'inc/class-product-tab.php';
 	require_once ETERNAL_META_PATH . 'inc/class-meta-registration.php';
 
-	new Eternal_Meta_Taxonomies();
+	new Eternal_Meta_Product_Tab();
 	new Eternal_Meta_Registration();
 }
 add_action( 'woocommerce_loaded', 'eternal_meta_init' );
