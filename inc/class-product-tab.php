@@ -30,6 +30,7 @@ class Eternal_Meta_Product_Tab {
 		add_action( 'woocommerce_product_write_panel_tabs', array( $this, 'add_tab' ) );
 		add_action( 'woocommerce_product_data_panels', array( $this, 'render_panel' ) );
 		add_action( 'woocommerce_process_product_meta', array( $this, 'save_fields' ) );
+		add_action( 'wp_ajax_eternal_save_product_details', array( $this, 'ajax_save' ) );
 	}
 
 	/**
@@ -54,219 +55,238 @@ class Eternal_Meta_Product_Tab {
 
 		echo '<div id="eternal_meta_data" class="panel woocommerce_options_panel hidden">';
 
-		// ── Identity ──────────────────────────────────────────────────────────
+		// ── Buy Box ───────────────────────────────────────────────────────────
 		echo '<div class="options_group">';
-		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'Identity', 'eternal-product-meta' ) . '</strong></p>';
+		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'Contains', 'eternal-product-meta' ) . '</strong></p>';
 
 		woocommerce_wp_text_input(
 			array(
-				'id'          => 'product_name_fr',
-				'label'       => __( 'French Subtitle', 'eternal-product-meta' ),
-				'placeholder' => 'Sérum hydratant',
-				'value'       => (string) get_post_meta( $id, 'product_name_fr', true ),
+				'id'          => 'product_buy_box_amount',
+				'label'       => __( 'Amount', 'eternal-product-meta' ),
+				'placeholder' => '100',
+				'type'        => 'number',
+				'value'       => (string) get_post_meta( $id, 'product_buy_box_amount', true ),
 			)
 		);
 
 		woocommerce_wp_text_input(
 			array(
-				'id'    => 'product_eyebrow',
-				'label' => __( 'Eyebrow Label', 'eternal-product-meta' ),
-				'value' => (string) get_post_meta( $id, 'product_eyebrow', true ),
-			)
-		);
-
-		woocommerce_wp_text_input(
-			array(
-				'id'    => 'product_tagline',
-				'label' => __( 'Tagline', 'eternal-product-meta' ),
-				'value' => (string) get_post_meta( $id, 'product_tagline', true ),
-			)
-		);
-
-		woocommerce_wp_text_input(
-			array(
-				'id'          => 'product_display_tags',
-				'label'       => __( 'Display Tags', 'eternal-product-meta' ),
-				'placeholder' => 'Hydrating, SPF, Vegan',
-				'description' => __( 'Comma-separated pill labels shown on product cards.', 'eternal-product-meta' ),
-				'desc_tip'    => true,
-				'value'       => (string) get_post_meta( $id, 'product_display_tags', true ),
-			)
-		);
-
-		woocommerce_wp_text_input(
-			array(
-				'id'          => 'product_card_bg',
-				'label'       => __( 'Card Background Colour', 'eternal-product-meta' ),
-				'placeholder' => '#f5f5f5',
-				'description' => __( 'Hex colour for the product card background.', 'eternal-product-meta' ),
-				'desc_tip'    => true,
-				'value'       => (string) get_post_meta( $id, 'product_card_bg', true ),
+				'id'          => 'product_buy_box_unit',
+				'label'       => __( 'Unit', 'eternal-product-meta' ),
+				'placeholder' => 'ml, capsules, g…',
+				'value'       => (string) get_post_meta( $id, 'product_buy_box_unit', true ),
 			)
 		);
 
 		echo '</div>';
 
-		// ── Classification ────────────────────────────────────────────────────
 		echo '<div class="options_group">';
-		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'Classification', 'eternal-product-meta' ) . '</strong></p>';
+		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'Ingredients &amp; Safety', 'eternal-product-meta' ) . '</strong></p>';
 
-		woocommerce_wp_text_input(
+		woocommerce_wp_textarea_input(
 			array(
-				'id'          => 'product_type_label',
-				'label'       => __( 'Product Type', 'eternal-product-meta' ),
-				'placeholder' => 'Serum',
-				'description' => __( 'E.g. Serum, Moisturiser, Cleanser, Eye Cream.', 'eternal-product-meta' ),
-				'desc_tip'    => true,
-				'value'       => (string) get_post_meta( $id, 'product_type_label', true ),
-			)
-		);
-
-		woocommerce_wp_text_input(
-			array(
-				'id'          => 'product_skin_type',
-				'label'       => __( 'Skin Type', 'eternal-product-meta' ),
-				'placeholder' => 'All skin types',
-				'description' => __( 'E.g. Oily, Dry, Combination, Sensitive, All.', 'eternal-product-meta' ),
-				'desc_tip'    => true,
-				'value'       => (string) get_post_meta( $id, 'product_skin_type', true ),
+				'id'    => 'product_buy_box_ingredients',
+				'label' => __( 'Ingredients', 'eternal-product-meta' ),
+				'value' => (string) get_post_meta( $id, 'product_buy_box_ingredients', true ),
 			)
 		);
 
 		woocommerce_wp_textarea_input(
 			array(
-				'id'          => 'product_benefits',
-				'label'       => __( 'Benefits', 'eternal-product-meta' ),
-				'placeholder' => 'Hydrating, Anti-aging, Brightening',
-				'description' => __( 'Key benefits, one per line or comma-separated.', 'eternal-product-meta' ),
-				'desc_tip'    => true,
-				'value'       => (string) get_post_meta( $id, 'product_benefits', true ),
+				'id'    => 'product_buy_box_caution',
+				'label' => __( 'Cautionary Text', 'eternal-product-meta' ),
+				'value' => (string) get_post_meta( $id, 'product_buy_box_caution', true ),
 			)
 		);
 
 		echo '</div>';
 
-		// ── Fragrance ─────────────────────────────────────────────────────────
 		echo '<div class="options_group">';
-		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'Fragrance', 'eternal-product-meta' ) . '</strong></p>';
+		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'How to Apply', 'eternal-product-meta' ) . '</strong></p>';
 
-		woocommerce_wp_text_input(
+		woocommerce_wp_textarea_input(
 			array(
-				'id'    => 'product_notes_top',
-				'label' => __( 'Top Notes', 'eternal-product-meta' ),
-				'value' => (string) get_post_meta( $id, 'product_notes_top', true ),
+				'id'    => 'product_buy_box_how_to_apply',
+				'label' => __( 'How to Use', 'eternal-product-meta' ),
+				'value' => (string) get_post_meta( $id, 'product_buy_box_how_to_apply', true ),
 			)
 		);
 
-		woocommerce_wp_text_input(
+		woocommerce_wp_textarea_input(
 			array(
-				'id'    => 'product_notes_middle',
-				'label' => __( 'Middle Notes', 'eternal-product-meta' ),
-				'value' => (string) get_post_meta( $id, 'product_notes_middle', true ),
-			)
-		);
-
-		woocommerce_wp_text_input(
-			array(
-				'id'    => 'product_notes_base',
-				'label' => __( 'Base Notes', 'eternal-product-meta' ),
-				'value' => (string) get_post_meta( $id, 'product_notes_base', true ),
+				'id'          => 'product_buy_box_bonus_tip',
+				'label'       => __( 'Bonus Tip', 'eternal-product-meta' ),
+				'placeholder' => 'FOR AN AROMATIC EXPERIENCE: Start your body routine…',
+				'value'       => (string) get_post_meta( $id, 'product_buy_box_bonus_tip', true ),
 			)
 		);
 
 		echo '</div>';
 
-		// ── Ingredients ───────────────────────────────────────────────────────
+		// ── Benefits ─────────────────────────────────────────────────────────
 		echo '<div class="options_group">';
-		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'Ingredients', 'eternal-product-meta' ) . '</strong></p>';
+		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'Benefits', 'eternal-product-meta' ) . '</strong></p>';
 
 		woocommerce_wp_textarea_input(
 			array(
-				'id'          => 'product_inci',
-				'label'       => __( 'INCI List', 'eternal-product-meta' ),
-				'description' => __( 'Full INCI ingredient list. HTML allowed.', 'eternal-product-meta' ),
+				'id'          => 'product_benefits_text',
+				'label'       => __( 'Benefits Text', 'eternal-product-meta' ),
+				'description' => __( 'For paragraph-style benefit content. Leave blank if using bullets below.', 'eternal-product-meta' ),
 				'desc_tip'    => true,
-				'value'       => (string) get_post_meta( $id, 'product_inci', true ),
+				'value'       => (string) get_post_meta( $id, 'product_benefits_text', true ),
 			)
 		);
 
 		woocommerce_wp_textarea_input(
 			array(
-				'id'    => 'product_ingredients_disclaimer',
-				'label' => __( 'Disclaimer', 'eternal-product-meta' ),
-				'value' => (string) get_post_meta( $id, 'product_ingredients_disclaimer', true ),
-			)
-		);
-
-		woocommerce_wp_text_input(
-			array(
-				'id'    => 'product_allergy_info',
-				'label' => __( 'Allergy Info', 'eternal-product-meta' ),
-				'value' => (string) get_post_meta( $id, 'product_allergy_info', true ),
-			)
-		);
-
-		woocommerce_wp_text_input(
-			array(
-				'id'    => 'product_dosage_instructions',
-				'label' => __( 'Dosage Instructions', 'eternal-product-meta' ),
-				'value' => (string) get_post_meta( $id, 'product_dosage_instructions', true ),
+				'id'          => 'product_benefits_bullets',
+				'label'       => __( 'Benefits Bullets', 'eternal-product-meta' ),
+				'description' => __( 'One benefit per line — each line becomes a bullet point. Leave blank if using text above.', 'eternal-product-meta' ),
+				'desc_tip'    => true,
+				'value'       => (string) get_post_meta( $id, 'product_benefits_bullets', true ),
 			)
 		);
 
 		echo '</div>';
 
-		// ── How to Use ────────────────────────────────────────────────────────
+		// ── Product Caption ──────────────────────────────────────────────────
 		echo '<div class="options_group">';
-		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'How to Use', 'eternal-product-meta' ) . '</strong></p>';
+		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'Product Caption', 'eternal-product-meta' ) . '</strong></p>';
 
-		woocommerce_wp_textarea_input(
+		woocommerce_wp_text_input(
 			array(
-				'id'          => 'product_how_to_use',
-				'label'       => __( 'Instructions', 'eternal-product-meta' ),
-				'description' => __( 'HTML allowed.', 'eternal-product-meta' ),
-				'desc_tip'    => true,
-				'value'       => (string) get_post_meta( $id, 'product_how_to_use', true ),
-			)
-		);
-
-		woocommerce_wp_textarea_input(
-			array(
-				'id'          => 'product_storage_warnings',
-				'label'       => __( 'Storage & Warnings', 'eternal-product-meta' ),
-				'description' => __( 'HTML allowed.', 'eternal-product-meta' ),
-				'desc_tip'    => true,
-				'value'       => (string) get_post_meta( $id, 'product_storage_warnings', true ),
+				'id'    => 'product_caption',
+				'label' => __( 'Caption', 'eternal-product-meta' ),
+				'value' => (string) get_post_meta( $id, 'product_caption', true ),
 			)
 		);
 
 		echo '</div>';
 
-		// ── Editorial ─────────────────────────────────────────────────────────
+		// ── French Text ──────────────────────────────────────────────────────
 		echo '<div class="options_group">';
-		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'Editorial', 'eternal-product-meta' ) . '</strong></p>';
+		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'French Text', 'eternal-product-meta' ) . '</strong></p>';
 
 		woocommerce_wp_text_input(
 			array(
-				'id'    => 'product_editorial_headline',
-				'label' => __( 'Headline', 'eternal-product-meta' ),
-				'value' => (string) get_post_meta( $id, 'product_editorial_headline', true ),
+				'id'    => 'product_french_text',
+				'label' => __( 'French Text', 'eternal-product-meta' ),
+				'value' => (string) get_post_meta( $id, 'product_french_text', true ),
 			)
 		);
 
-		woocommerce_wp_textarea_input(
+		echo '</div>';
+
+		// ── Additional Product Tags ───────────────────────────────────────────
+		echo '<div class="options_group">';
+		echo '<p class="epm-section-heading"><strong>' . esc_html__( 'Additional Product Tags', 'eternal-product-meta' ) . '</strong></p>';
+
+		woocommerce_wp_text_input(
 			array(
-				'id'          => 'product_editorial_body',
-				'label'       => __( 'Body Copy', 'eternal-product-meta' ),
-				'description' => __( 'HTML allowed.', 'eternal-product-meta' ),
+				'id'          => 'product_additional_tags',
+				'label'       => __( 'Tags', 'eternal-product-meta' ),
+				'placeholder' => 'Fragrance Free, Vegan, SPF 30…',
+				'description' => __( 'Comma-separated. Shown as pill tags on the product card alongside the amount + unit.', 'eternal-product-meta' ),
 				'desc_tip'    => true,
-				'value'       => (string) get_post_meta( $id, 'product_editorial_body', true ),
+				'value'       => (string) get_post_meta( $id, 'product_additional_tags', true ),
 			)
 		);
 
+		echo '</div>';
+
+		// ── Save button ──────────────────────────────────────────────────────
+		echo '<div style="padding:12px 12px 16px;">';
+		echo '<button type="button" class="button button-primary epm-save-btn" '
+			. 'data-action="eternal_save_product_details" '
+			. 'data-panel="eternal_meta_data" '
+			. 'data-label="' . esc_attr__( 'Save Product Details', 'eternal-product-meta' ) . '" '
+			. 'data-nonce="' . esc_attr( wp_create_nonce( 'eternal_meta_save' ) ) . '" '
+			. 'data-post-id="' . esc_attr( (string) $id ) . '">'
+			. esc_html__( 'Save Product Details', 'eternal-product-meta' )
+			. '</button>'
+			. '<span class="epm-save-msg" style="margin-left:10px;font-style:italic;display:none;"></span>';
 		echo '</div>';
 
 		echo '</div>'; // #eternal_meta_data
+
+		$this->render_scripts();
+	}
+
+	/**
+	 * Outputs the shared save-button JavaScript.
+	 * Uses a guard so it only initialises once even if multiple tabs render it.
+	 *
+	 * @return void
+	 */
+	private function render_scripts(): void {
+		?>
+		<script type="text/javascript">
+		(function ($) {
+			'use strict';
+
+			if ( window.epmSaveInitialized ) {
+				return;
+			}
+			window.epmSaveInitialized = true;
+
+			$(document).on('click', '.epm-save-btn', function () {
+				var $btn    = $(this);
+				var $msg    = $btn.siblings('.epm-save-msg');
+				var panelId = $btn.data('panel');
+				var label   = $btn.data('label');
+				var extra   = $.param({
+					action  : $btn.data('action'),
+					nonce   : $btn.data('nonce'),
+					post_id : $btn.data('post-id'),
+				});
+				var fields  = $('#' + panelId).find(':input').serialize();
+
+				$btn.prop('disabled', true).text('<?php echo esc_js( __( 'Saving…', 'eternal-product-meta' ) ); ?>');
+				$msg.hide();
+
+				$.post(ajaxurl, fields + '&' + extra, function (response) {
+					$btn.prop('disabled', false).text(label);
+					if ( response.success ) {
+						$msg.text('<?php echo esc_js( __( '✓ Saved', 'eternal-product-meta' ) ); ?>').css('color', '#46b450').show();
+						setTimeout(function () { $msg.fadeOut(); }, 3000);
+					} else {
+						$msg.text('✗ ' + ( response.data.message || '<?php echo esc_js( __( 'Error saving', 'eternal-product-meta' ) ); ?>' )).css('color', '#d63638').show();
+					}
+				}).fail(function () {
+					$btn.prop('disabled', false).text(label);
+					$msg.text('<?php echo esc_js( __( '✗ Connection error', 'eternal-product-meta' ) ); ?>').css('color', '#d63638').show();
+				});
+			});
+
+		}(jQuery));
+		</script>
+		<?php
+	}
+
+	/**
+	 * Saves all product detail fields when a product is published or updated.
+	 *
+	 * WooCommerce verifies the product nonce before firing this hook.
+	 *
+	 * @param int $post_id The product post ID.
+	 * @return void
+	 */
+	/**
+	 * AJAX handler for the "Save Product Details" button.
+	 *
+	 * @return void
+	 */
+	public function ajax_save(): void {
+		check_ajax_referer( 'eternal_meta_save', 'nonce' );
+
+		$post_id = absint( wp_unslash( $_POST['post_id'] ?? 0 ) );
+		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'eternal-product-meta' ) ) );
+		}
+
+		$this->save_fields( $post_id );
+
+		wp_send_json_success( array( 'message' => __( 'Saved.', 'eternal-product-meta' ) ) );
 	}
 
 	/**
@@ -279,20 +299,14 @@ class Eternal_Meta_Product_Tab {
 	 */
 	public function save_fields( int $post_id ): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce verified by WooCommerce before this hook fires.
+
+		// Buy Box + card tags — text fields.
 		$text_fields = array(
-			'product_name_fr',
-			'product_eyebrow',
-			'product_tagline',
-			'product_display_tags',
-			'product_card_bg',
-			'product_type_label',
-			'product_skin_type',
-			'product_notes_top',
-			'product_notes_middle',
-			'product_notes_base',
-			'product_allergy_info',
-			'product_dosage_instructions',
-			'product_editorial_headline',
+			'product_buy_box_amount',
+			'product_buy_box_unit',
+			'product_additional_tags',
+			'product_french_text',
+			'product_caption',
 		);
 
 		foreach ( $text_fields as $field ) {
@@ -303,9 +317,14 @@ class Eternal_Meta_Product_Tab {
 			);
 		}
 
+		// Buy Box + benefits — textarea fields.
 		$textarea_fields = array(
-			'product_benefits',
-			'product_ingredients_disclaimer',
+			'product_buy_box_ingredients',
+			'product_buy_box_caution',
+			'product_buy_box_how_to_apply',
+			'product_buy_box_bonus_tip',
+			'product_benefits_text',
+			'product_benefits_bullets',
 		);
 
 		foreach ( $textarea_fields as $field ) {
@@ -313,21 +332,6 @@ class Eternal_Meta_Product_Tab {
 				$post_id,
 				$field,
 				sanitize_textarea_field( wp_unslash( $_POST[ $field ] ?? '' ) )
-			);
-		}
-
-		$html_fields = array(
-			'product_inci',
-			'product_how_to_use',
-			'product_storage_warnings',
-			'product_editorial_body',
-		);
-
-		foreach ( $html_fields as $field ) {
-			update_post_meta(
-				$post_id,
-				$field,
-				wp_kses_post( wp_unslash( $_POST[ $field ] ?? '' ) )
 			);
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Missing

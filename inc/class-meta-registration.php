@@ -303,5 +303,207 @@ class Eternal_Meta_Registration {
 				'sanitize_callback' => 'absint',
 			)
 		);
+
+		// 19. Key ingredients section title.
+		register_post_meta(
+			'product',
+			'product_ingredients_title',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_text_field',
+				'description'       => __( 'Key ingredients section title', 'eternal-product-meta' ),
+			)
+		);
+
+		// 20. Key ingredients (JSON-encoded array of 3 × {image_id, image_url, name, description}).
+		register_post_meta(
+			'product',
+			'product_key_ingredients',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => static function ( string $value ): string {
+					$decoded = json_decode( $value, true );
+
+					if ( ! is_array( $decoded ) ) {
+						return '[]';
+					}
+
+					$encoded = wp_json_encode( $decoded );
+
+					return false !== $encoded ? $encoded : '[]';
+				},
+				'description'       => __( 'Key ingredients — JSON array of 3 entries with image, name, and description', 'eternal-product-meta' ),
+			)
+		);
+
+		// 20. Product features (JSON-encoded array of {image_id, image_url, heading, body}).
+		register_post_meta(
+			'product',
+			'product_features',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => static function ( string $value ): string {
+					$decoded = json_decode( $value, true );
+
+					if ( ! is_array( $decoded ) ) {
+						return '[]';
+					}
+
+					$encoded = wp_json_encode( $decoded );
+
+					return false !== $encoded ? $encoded : '[]';
+				},
+				'description'       => __( 'Product features — JSON array of image, heading, and body per feature', 'eternal-product-meta' ),
+			)
+		);
+
+		// 20. Benefits — paragraph text.
+		register_post_meta(
+			'product',
+			'product_benefits_text',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_textarea_field',
+				'description'       => __( 'Benefits as paragraph text', 'eternal-product-meta' ),
+			)
+		);
+
+		// 21. Benefits — bullet points (one per line).
+		register_post_meta(
+			'product',
+			'product_benefits_bullets',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_textarea_field',
+				'description'       => __( 'Benefits as bullet points, one per line', 'eternal-product-meta' ),
+			)
+		);
+
+		// 22. Product caption (single-line caption shown on the product).
+		register_post_meta(
+			'product',
+			'product_caption',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_text_field',
+				'description'       => __( 'Product caption', 'eternal-product-meta' ),
+			)
+		);
+
+		// 21. French text (single-line French product descriptor).
+		register_post_meta(
+			'product',
+			'product_french_text',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_text_field',
+				'description'       => __( 'French product descriptor text', 'eternal-product-meta' ),
+			)
+		);
+
+		// 21. Additional product tags (comma-separated pill labels for the product card).
+		register_post_meta(
+			'product',
+			'product_additional_tags',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_text_field',
+				'description'       => __( 'Comma-separated pill tags shown on the product card alongside amount + unit', 'eternal-product-meta' ),
+			)
+		);
+
+		// 21. Buy Box — numeric amount (e.g. 100, 30).
+		register_post_meta(
+			'product',
+			'product_buy_box_amount',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_text_field',
+				'description'       => __( 'Buy box contains: numeric amount', 'eternal-product-meta' ),
+			)
+		);
+
+		// 20. Buy Box — unit label (e.g. ml, capsules, g).
+		register_post_meta(
+			'product',
+			'product_buy_box_unit',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_text_field',
+				'description'       => __( 'Buy box contains: unit of measurement', 'eternal-product-meta' ),
+			)
+		);
+
+		// 21. Buy Box — consumer-facing ingredients list.
+		register_post_meta(
+			'product',
+			'product_buy_box_ingredients',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_textarea_field',
+				'description'       => __( 'Buy box ingredients list', 'eternal-product-meta' ),
+			)
+		);
+
+		// 22. Buy Box — cautionary / warning text.
+		register_post_meta(
+			'product',
+			'product_buy_box_caution',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_textarea_field',
+				'description'       => __( 'Buy box cautionary text', 'eternal-product-meta' ),
+			)
+		);
+
+		// 23. Buy Box — how to apply instructions.
+		register_post_meta(
+			'product',
+			'product_buy_box_how_to_apply',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_textarea_field',
+				'description'       => __( 'Buy box how to apply instructions', 'eternal-product-meta' ),
+			)
+		);
+
+		// 24. Buy Box — bonus tip / aromatic experience note.
+		register_post_meta(
+			'product',
+			'product_buy_box_bonus_tip',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'sanitize_callback' => 'sanitize_textarea_field',
+				'description'       => __( 'Buy box bonus tip', 'eternal-product-meta' ),
+			)
+		);
 	}
 }
