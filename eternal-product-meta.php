@@ -43,11 +43,13 @@ function eternal_meta_init(): void {
 	require_once ETERNAL_META_PATH . 'inc/class-product-tab.php';
 	require_once ETERNAL_META_PATH . 'inc/class-features-tab.php';
 	require_once ETERNAL_META_PATH . 'inc/class-ingredients-tab.php';
+	require_once ETERNAL_META_PATH . 'inc/class-video-assets-tab.php';
 	require_once ETERNAL_META_PATH . 'inc/class-meta-registration.php';
 
 	new Eternal_Meta_Product_Tab();
 	new Eternal_Meta_Features_Tab();
 	new Eternal_Meta_Ingredients_Tab();
+	new Eternal_Meta_Video_Assets_Tab();
 	new Eternal_Meta_Registration();
 }
 add_action( 'woocommerce_loaded', 'eternal_meta_init' );
@@ -83,6 +85,14 @@ function eternal_meta_enqueue_editor(): void {
 		),
 		$asset['version'],
 		true
+	);
+
+	wp_localize_script(
+		'eternal-product-meta-editor',
+		'eternalProductMeta',
+		array(
+			'homeUrl' => untrailingslashit( home_url() ),
+		)
 	);
 }
 add_action( 'enqueue_block_editor_assets', 'eternal_meta_enqueue_editor' );

@@ -505,5 +505,41 @@ class Eternal_Meta_Registration {
 				'description'       => __( 'Buy box bonus tip', 'eternal-product-meta' ),
 			)
 		);
+
+		// 25. Product video assets (JSON-encoded array of { url } entries).
+		register_post_meta(
+			'product',
+			'product_video_assets',
+			array(
+				'type'              => 'string',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'default'           => '[]',
+				'sanitize_callback' => static function ( string $value ): string {
+					$decoded = json_decode( $value, true );
+
+					if ( ! is_array( $decoded ) ) {
+						return '[]';
+					}
+
+					$sanitized = array_map(
+						static function ( $item ): array {
+							$url = isset( $item['url'] ) && is_string( $item['url'] ) ? $item['url'] : '';
+							// Relative paths (/wp-content/…) are preserved as-is; absolute URLs are sanitised.
+							$sanitized_url = str_starts_with( $url, '/' )
+								? sanitize_text_field( $url )
+								: esc_url_raw( $url );
+							return array( 'url' => $sanitized_url );
+						},
+						$decoded
+					);
+
+					$encoded = wp_json_encode( $sanitized );
+
+					return false !== $encoded ? $encoded : '[]';
+				},
+				'description'       => __( 'Product video assets — JSON array of { url } entries (YouTube, Vimeo, or local /wp-content path)', 'eternal-product-meta' ),
+			)
+		);
 	}
 }
